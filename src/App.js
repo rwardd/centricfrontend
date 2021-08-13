@@ -4,6 +4,7 @@ import Web3 from 'web3'
 import './App.css'
 import detectEthereumProvider from '@metamask/detect-provider';
 import { thistle } from 'color-name';
+import NFTFetcher from './NFTFetcher';
 
 const METAMASK_PUBLIC_KEY = process.env.METAMASK_PUBLIC_KEY;
 const METAMASK_PRIVATE_KEY = process.env.METAMASK_PRIVATE_KEY;
@@ -156,13 +157,34 @@ class App extends Component {
     
   }
 
+  async handleDNAHash(event) {
+    
+    this.setState({DNAtoHash: event.target.value});
+  }
+
+  async hashDNA() {
+    const data = this.state.DNAtoHash
+    
+    const hashed = await this.state.contract.methods.hashDNA(data).call(function (err, res) {
+      if (err) {
+        console.log("An Error has occured", err);
+        return
+        }
+        console.log("The Hash is", res);
+        //owner = res
+      })
+
+    this.setState({HashedDNA: hashed})
+    
+
+  }
  
 
   render() {
     return (
       <div className="container">
-        
-        <h1>Centric Trial Contract</h1>
+      <div className="basics">
+        <h1 className="heading">Centric Trial Contract</h1>
         <p>Your MetaMask account: {this.state.account}</p>
         <div className="getOwners">
           <form onSubmit={this.handleSubmit}>
@@ -173,9 +195,10 @@ class App extends Component {
             <input type="submit" value="Submit"/>
           </form>
           <p>Token Owner: {this.state.ownerAccount}</p>
-
+          
         </div>
         <div className="getOwners">
+          <h4>ATTRIBUTES</h4>
           <form onSubmit={this.handleSubmit}>
             <label>
               Get Attributes from tokenID:
@@ -183,7 +206,7 @@ class App extends Component {
             </label>
             <input type="submit" value="Submit"/>
           </form>
-          <p>ATTRIBUTES</p>
+          
           <p>NLIS: {this.state.NLIS} </p>
           <p>PIC: {this.state.PIC}</p>
           <p>DNAHASH: {this.state.DNAHASH}</p>
@@ -216,9 +239,26 @@ class App extends Component {
           </form>
 
         </div>
+        <div>
 
+            <br />
+            Hash DNA:
+            <input type="text" value={this.state.DNAtoHash} onChange={this.handleDNAHash.bind(this)}/>
+            <br />
+            <button onClick={this.hashDNA.bind(this)}>HASH</button> 
+            <br />
+            <br/>
+            <label>HASH RESULT:  {this.state.HashedDNA}</label>
+            
 
+        </div>
       </div>
+      <div className="basics">
+        <NFTFetcher />
+      </div>
+       
+      </div>
+      
     );
     }
   }

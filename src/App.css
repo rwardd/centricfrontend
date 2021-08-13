@@ -4,17 +4,25 @@
     font-size: 50px;
     color: rgb(130, 101, 196);
     text-transform: uppercase;
+    text-align: center;
   }
 
-button {
-    margin: 30px;
-    font-size: 18px;
-    height: 65px;
-    width: 250px;
-    border-radius: 10px;
-    border: none;
-    box-shadow: 1px 1px 0px 2px rgba (0,0,0,0.3);
-    background: rgb(141,217,252);
-     cursor: pointer;
-   }
 
+.container {
+  display: flex;
+}
+
+.basics{
+  /*width: 50%;
+  float: left;
+  padding: 20px;
+  border: 2px solid white;
+  */
+  flex: 1;
+    border: 2px solid white;
+}
+
+
+.basics:first-child {
+  margin-right: 20px;
+} 

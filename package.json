@@ -1,5 +1,5 @@
 {
-  "homepage": "http://rwardd.github.io/centricfrontend",
+  "homepage": "http://rwardd.github.io/centrictestdeploy",
   "name": "centric-frontend",
   "version": "0.1.0",
   "private": true,
@@ -10,6 +10,7 @@
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "bootstrap": "^4.3.1",
+    "jquery": "^3.6.0",
     "react": "^17.0.2",
     "react-bootstrap": "^1.0.0-beta.5",
     "react-dom": "^17.0.2",
