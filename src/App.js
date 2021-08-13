@@ -5,6 +5,8 @@ import './App.css'
 import detectEthereumProvider from '@metamask/detect-provider';
 import { thistle } from 'color-name';
 
+const METAMASK_PUBLIC_KEY = process.env.METAMASK_PUBLIC_KEY;
+const METAMASK_PRIVATE_KEY = process.env.METAMASK_PRIVATE_KEY;
 
 
 
@@ -24,12 +26,14 @@ class App extends Component {
     this.state = {mintADDRESS: ''}
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleMintInputChange = this.handleMintInputChange.bind(this)
 
   }
 
   componentWillMount() {
     this.loadBlockchainData()
     document.body.style.backgroundColor = "darkgrey"
+    console.log(METAMASK_PRIVATE_KEY, METAMASK_PUBLIC_KEY)
   }
 
   async loadBlockchainData() {
@@ -128,13 +132,31 @@ class App extends Component {
       return attributes
   }
 
-  handleCreation(){
-    alert(this.state.mintNLIS)
+  handleMintInputChange(event) {
+    const value = event.target.value;
+    const name = event.target.name;
+
+    this.setState({
+      [name]: value
+    })
   }
 
-  mintChangeHandler(event) {
+  async handleCreation(event){
+    const NLIS = this.state.mintNLIS;
+    const PIC = this.state.mintPIC;
+    const DNAHash = this.state.mintDNAHASH;
+    const owner = this.state.mintADDRESS;
+
+    const mint = await this.state.contract.methods.mintNFT(NLIS, PIC, DNAHash, owner).send({
+      from: this.state.account,
+      to: "0x62Ae2D6804496CB238288BF47C3bC5912025461F",
+      gasPrice: '20000000000'
+    })
+    console.log(mint)
     
   }
+
+ 
 
   render() {
     return (
@@ -172,22 +194,22 @@ class App extends Component {
           <form onSubmit={this.handleCreation.bind(this)}>
             <label>
               NLIS:  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-              <input type="text" value={this.state.mintNLIS} onChange={this.doNothing}/>
+              <input name="mintNLIS" type="text" value={this.state.mintNLIS} onChange={this.handleMintInputChange}/>
             </label>
             <br></br>
             <label>
               PIC: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
-              <input type="text" value={this.state.mintPIC} onChange={this.doNothing}/>
+              <input name="mintPIC" type="text" value={this.state.mintPIC} onChange={this.handleMintInputChange}/>
             </label>
             <br></br>
             <label>
               DNAHASH:
-              <input type="text" value={this.state.mintDNAHASH} onChange={this.doNothing}/>
+              <input name="mintDNAHASH" type="text" value={this.state.mintDNAHASH} onChange={this.handleMintInputChange}/>
             </label>
             <br></br>
             <label>
               OWNER: &nbsp; &nbsp;&nbsp;
-              <input type="text" value={this.state.mintADDRESS} onChange={this.doNothing}/>
+              <input name="mintADDRESS" type="text" value={this.state.mintADDRESS} onChange={this.handleMintInputChange}/>
             </label>
             <br></br>
             <input type="submit" value="MINT"/>
