@@ -4,41 +4,19 @@ import Web3 from 'web3'
 import App from './App.js'
 import detectEthereumProvider from '@metamask/detect-provider';
 import { thistle } from 'color-name';
-import jQuery from 'jquery';
 
 
 class NFTFetcher extends Component {
     constructor(props) {
         super(props)
         this.state = {account: ''}
+        this.state = {contract: ''}
         this.state = {
             AssetAttributes: []
         }
-    }
-
-    componentWillMount() {
-        this.loadBlockchainData()
-        
         
     }
 
-    
-    
-    async loadBlockchainData() {
-        const provider = await detectEthereumProvider();
-        //console.log(provider)
-        const web3 = new Web3(provider);
-        let getAccount = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        this.setState({account: getAccount[0]});
-        console.log(this.state.account)
-
-    
-        const CowContract = new web3.eth.Contract(COWTRIAL_ABI, COWTRIAL_ADDRESS)
-        
-        this.setState({contract: CowContract});
-        console.log(this.state.contract)
-        
-    }
 
     async handleAttributes(tokenID) {
     
@@ -58,7 +36,16 @@ class NFTFetcher extends Component {
 
     async getAllNFTs() {
         let assets;
-        assets = await this.state.contract.methods.tokensOfOwner(this.state.account).call(function (err, res) {
+        const AppProps = await this.props.getAppProps();
+        
+        const account1 = AppProps[1];
+        const contract1 = AppProps[0];
+        console.log(account1, contract1)
+        this.setState({contract: contract1})
+        this.setState({account: account1})
+        
+        console.log(this.state.contract)
+        assets = await contract1.methods.tokensOfOwner(this.state.account).call(function (err, res) {
         if (err) {
             console.log("An Error has occured", err);
             return
@@ -126,9 +113,11 @@ class NFTFetcher extends Component {
 
     render() {
         return (
-            <div>
+            <div className="container1">
                 <h1>MY ASSETS:</h1>
-                <button className="getButton" onClick={this.getAllNFTs.bind(this)}>Get My Assets</button>
+                <div className="buttonWrapper">
+                <button onClick={this.getAllNFTs.bind(this)}>Get My Assets</button>
+                </div>
                 <div>
                     {this.state.AssetAttributes.map((attribute, index)=>(
                         <p key={index}>

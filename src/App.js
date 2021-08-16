@@ -25,16 +25,12 @@ class App extends Component {
     this.state = {mintPIC: ''}
     this.state = {mintDNAHASH: ''}
     this.state = {mintADDRESS: ''}
+    this.state = {sendAddress: ''}
+    this.state = {sendTokenID: ''}
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleMintInputChange = this.handleMintInputChange.bind(this)
 
-  }
-
-  componentWillMount() {
-    this.loadBlockchainData()
-    document.body.style.backgroundColor = "darkgrey"
-    console.log(METAMASK_PRIVATE_KEY, METAMASK_PUBLIC_KEY)
   }
 
   async loadBlockchainData() {
@@ -102,6 +98,10 @@ class App extends Component {
   handleSubmit(event) {
     //alert("The owner is " + this.state.ownerAccount);
     event.preventDefault()
+  }
+
+  getAccountandContract() {
+    return [this.state.contract, this.state.account]
   }
 
   async getAttributes(tokenID) {
@@ -178,14 +178,49 @@ class App extends Component {
     
 
   }
+  
+  handleSend(event) {
+    const value = event.target.value;
+    const name = event.target.name;
+
+    this.setState({
+      [name]: value
+    })
+    
+
+  }
  
+
+
+  async handleSendButton(event) {
+    const toAddress = this.state.sendAddress
+    const fromAddress = this.state.account
+    const tokenId = this.state.sendTokenID
+
+    const sendCow = await this.state.contract.methods.sendCow(fromAddress, toAddress, tokenId).send({
+      from: this.state.account,
+      to: "0x62Ae2D6804496CB238288BF47C3bC5912025461F",
+      gasPrice: '20000000000'
+    })
+
+
+  }
+  
+  async openMetaMask() {
+    this.loadBlockchainData()
+    this.setState({isLoaded: true})
+  }
 
   render() {
     return (
       <div className="container">
       <div className="basics">
         <h1 className="heading">Centric Trial Contract</h1>
-        <p>Your MetaMask account: {this.state.account}</p>
+        <div className="buttonWrapper">
+        <button className="MetaButton" onClick={this.openMetaMask.bind(this)}>Connect to MetaMask</button>
+        </div>
+        {this.state.isLoaded && <p>Your MetaMask account: {this.state.account}</p>}
+        <p><a href="https://ropsten.etherscan.io/address/0x62Ae2D6804496CB238288BF47C3bC5912025461F" target="_blank">Contract on Etherscan</a></p>
         <div className="getOwners">
           <form onSubmit={this.handleSubmit}>
             <label>
@@ -252,9 +287,26 @@ class App extends Component {
             
 
         </div>
+        <div>
+          <br />
+          <h5>Send NFT</h5>
+          Send Address: &nbsp; &nbsp;
+          <input type="text" name="sendAddress" value={this.state.sendAddress} onChange={this.handleSend.bind(this)}/>
+          <br />
+          TokenID: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          <input type="text" name="sendTokenID" value={this.state.sendTokenID} onChange={this.handleSend.bind(this)}/>
+          <br/>
+          <button onClick={this.handleSendButton.bind(this)}>TRANSFER</button>
+          <br/>
+          <br/>
+          <br/>
+
+
+
+        </div>
       </div>
       <div className="basics">
-        <NFTFetcher />
+        <NFTFetcher getAppProps={this.getAccountandContract.bind(this)}/>
       </div>
        
       </div>
